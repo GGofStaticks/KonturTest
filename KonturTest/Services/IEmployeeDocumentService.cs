@@ -1,8 +1,9 @@
+using System.Xml;
 using KonturTest.Models;
 
 namespace KonturTest.Services;
 
 public interface IEmployeeDocumentService
 {
-    PayrollResult BuildAndSave(string transformedXml, string employeesPath);
+    PayrollResult BuildAndSave(XmlDocument document, string employeesPath);
 }

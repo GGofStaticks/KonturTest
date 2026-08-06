@@ -5,22 +5,24 @@ namespace KonturTest.Services;
 
 public sealed class Data1Repository : IData1Repository
 {
-    public XmlDocument UpdatePayTotal(string data1Path)
+    public XmlDocument UpdatePayTotal(string data1Path) =>
+        UpdatePayTotal(LoadDocument(data1Path), data1Path);
+
+    public XmlDocument UpdatePayTotal(XmlDocument document, string data1Path)
     {
-        var document = LoadDocument(data1Path);
+        var payElement = document.DocumentElement
+            ?? throw new InvalidOperationException("В файле нет корневого элемента Pay.");
+
         var total = document.SelectNodes("//item")!
             .Cast<XmlElement>()
             .Sum(item => AmountParser.Parse(item.GetAttribute("amount")));
-
-        var payElement = document.DocumentElement
-            ?? throw new InvalidOperationException("В файле нет корневого элемента Pay.");
 
         payElement.SetAttribute("total", AmountParser.Format(total));
         document.Save(data1Path);
         return document;
     }
 
-    public void AddItem(string data1Path, string name, string surname, string amount, string mount)
+    public XmlDocument AddItem(string data1Path, string name, string surname, string amount, string mount)
     {
         var document = LoadDocument(data1Path);
         var payElement = document.DocumentElement
@@ -34,6 +36,7 @@ public sealed class Data1Repository : IData1Repository
         payElement.AppendChild(item);
 
         document.Save(data1Path);
+        return document;
     }
 
     private static XmlDocument LoadDocument(string data1Path)

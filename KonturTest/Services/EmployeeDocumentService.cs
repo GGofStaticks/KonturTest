@@ -8,37 +8,39 @@ namespace KonturTest.Services;
 
 public sealed class EmployeeDocumentService : IEmployeeDocumentService
 {
-    public PayrollResult BuildAndSave(string transformedXml, string employeesPath)
+    public PayrollResult BuildAndSave(XmlDocument document, string employeesPath)
     {
-        var document = new XmlDocument { PreserveWhitespace = false };
-        document.LoadXml(transformedXml);
+        var employees = new List<EmployeeSummary>();
+        var monthlyTotalsAccumulator = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
 
         foreach (XmlElement employee in document.SelectNodes("//Employee")!)
         {
-            var total = employee.SelectNodes("salary")!
-                .Cast<XmlElement>()
-                .Sum(salary => AmountParser.Parse(salary.GetAttribute("amount")));
+            var employeeTotal = 0m;
 
-            employee.SetAttribute("total", AmountParser.Format(total));
-        }
+            foreach (XmlElement salary in employee.SelectNodes("salary")!)
+            {
+                var amount = AmountParser.Parse(salary.GetAttribute("amount"));
+                employeeTotal += amount;
 
-        var employees = document.SelectNodes("//Employee")!
-            .Cast<XmlElement>()
-            .Select(employee => new EmployeeSummary
+                var month = salary.GetAttribute("mount");
+                monthlyTotalsAccumulator.TryGetValue(month, out var monthTotal);
+                monthlyTotalsAccumulator[month] = monthTotal + amount;
+            }
+
+            employee.SetAttribute("total", AmountParser.Format(employeeTotal));
+            employees.Add(new EmployeeSummary
             {
                 Name = employee.GetAttribute("name"),
                 Surname = employee.GetAttribute("surname"),
-                Total = AmountParser.Parse(employee.GetAttribute("total"))
-            })
-            .ToList();
+                Total = employeeTotal
+            });
+        }
 
-        var monthlyTotals = document.SelectNodes("//salary")!
-            .Cast<XmlElement>()
-            .GroupBy(salary => salary.GetAttribute("mount"))
-            .Select(group => new MonthlyTotal
+        var monthlyTotals = monthlyTotalsAccumulator
+            .Select(pair => new MonthlyTotal
             {
-                Month = group.Key,
-                Total = group.Sum(salary => AmountParser.Parse(salary.GetAttribute("amount")))
+                Month = pair.Key,
+                Total = pair.Value
             })
             .OrderBy(item => MonthNames.GetOrderIndex(item.Month))
             .ThenBy(item => item.Month, StringComparer.OrdinalIgnoreCase)

@@ -11,28 +11,49 @@ public sealed class XsltTransformService : IXsltTransformService
     private string? _cachedXsltPath;
     private XslCompiledTransform? _cachedTransform;
 
-    public string Transform(string sourceXmlPath, string xsltPath)
+    public XmlDocument TransformToDocument(string sourceXmlPath, string xsltPath)
+    {
+        using var stream = TransformToStream(sourceXmlPath, xsltPath);
+        return LoadDocument(stream);
+    }
+
+    public XmlDocument TransformToDocument(XmlNode sourceXml, string xsltPath)
+    {
+        using var stream = TransformToStream(sourceXml, xsltPath);
+        return LoadDocument(stream);
+    }
+
+    private MemoryStream TransformToStream(string sourceXmlPath, string xsltPath)
     {
         var transform = GetOrLoadTransform(xsltPath);
-        using var stream = new MemoryStream();
+        var stream = new MemoryStream();
         using (var xmlWriter = CreateWriter(stream))
         {
             transform.Transform(sourceXmlPath, xmlWriter);
         }
 
-        return Encoding.UTF8.GetString(stream.ToArray());
+        stream.Position = 0;
+        return stream;
     }
 
-    public string Transform(XmlNode sourceXml, string xsltPath)
+    private MemoryStream TransformToStream(XmlNode sourceXml, string xsltPath)
     {
         var transform = GetOrLoadTransform(xsltPath);
-        using var stream = new MemoryStream();
+        var stream = new MemoryStream();
         using (var xmlWriter = CreateWriter(stream))
         {
             transform.Transform(sourceXml, null, xmlWriter);
         }
 
-        return Encoding.UTF8.GetString(stream.ToArray());
+        stream.Position = 0;
+        return stream;
+    }
+
+    private static XmlDocument LoadDocument(MemoryStream stream)
+    {
+        var document = new XmlDocument { PreserveWhitespace = false };
+        document.Load(stream);
+        return document;
     }
 
     private XslCompiledTransform GetOrLoadTransform(string xsltPath)

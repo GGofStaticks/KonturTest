@@ -1,4 +1,5 @@
 using System.IO;
+using System.Xml;
 using KonturTest.Helpers;
 using KonturTest.Models;
 
@@ -44,8 +45,8 @@ public sealed class PayrollService : IPayrollService
 
         try
         {
-            _data1Repository.AddItem(data1Path, name, surname, amount, mount);
-            return ExecutePipeline(ResourceFileNames.Data1);
+            var data1Document = _data1Repository.AddItem(data1Path, name, surname, amount, mount);
+            return ExecutePipeline(ResourceFileNames.Data1, data1Document);
         }
         catch
         {
@@ -61,22 +62,25 @@ public sealed class PayrollService : IPayrollService
         }
     }
 
-    private PayrollResult ExecutePipeline(string dataFileName)
+    private PayrollResult ExecutePipeline(string dataFileName, XmlDocument? data1Document = null)
     {
         var xsltPath = _paths.XsltPath;
-        string transformedXml;
+        XmlDocument transformedDocument;
 
         if (string.Equals(dataFileName, ResourceFileNames.Data1, StringComparison.OrdinalIgnoreCase))
         {
-            var data1Document = _data1Repository.UpdatePayTotal(_paths.Data1Path);
-            transformedXml = _xsltTransformService.Transform(data1Document, xsltPath);
+            var preparedData1 = data1Document is not null
+                ? _data1Repository.UpdatePayTotal(data1Document, _paths.Data1Path)
+                : _data1Repository.UpdatePayTotal(_paths.Data1Path);
+
+            transformedDocument = _xsltTransformService.TransformToDocument(preparedData1, xsltPath);
         }
         else
         {
             var dataPath = _paths.ResolveReadablePath(dataFileName);
-            transformedXml = _xsltTransformService.Transform(dataPath, xsltPath);
+            transformedDocument = _xsltTransformService.TransformToDocument(dataPath, xsltPath);
         }
 
-        return _employeeDocumentService.BuildAndSave(transformedXml, _paths.EmployeesPath);
+        return _employeeDocumentService.BuildAndSave(transformedDocument, _paths.EmployeesPath);
     }
 }

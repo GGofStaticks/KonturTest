@@ -4,7 +4,7 @@ namespace KonturTest.Services;
 
 public interface IXsltTransformService
 {
-    string Transform(string sourceXmlPath, string xsltPath);
+    XmlDocument TransformToDocument(string sourceXmlPath, string xsltPath);
 
-    string Transform(XmlNode sourceXml, string xsltPath);
+    XmlDocument TransformToDocument(XmlNode sourceXml, string xsltPath);
 }
