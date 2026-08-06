@@ -1,0 +1,138 @@
+﻿<Window x:Class="KonturTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="KonturTest — Зарплата"
+        Height="780"
+        Width="960"
+        MinHeight="620"
+        MinWidth="800">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBlock Text="Источник:"
+                       VerticalAlignment="Center"
+                       Margin="0,0,8,0"/>
+            <ComboBox x:Name="SourcesComboBox"
+                      Width="160"
+                      ItemsSource="{Binding Sources}"
+                      SelectedItem="{Binding SelectedSource}"
+                      DropDownOpened="SourcesComboBox_OnDropDownOpened"
+                      VerticalAlignment="Center"
+                      Margin="0,0,12,0"/>
+            <Button Content="Запустить"
+                    Width="120"
+                    Height="32"
+                    Command="{Binding RunCommand}"/>
+            <TextBlock Text="{Binding StatusMessage}"
+                       VerticalAlignment="Center"
+                       Margin="12,0,0,0"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="Сотрудники" Margin="0,0,8,8">
+            <DataGrid ItemsSource="{Binding Employees}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}" Width="*"/>
+                    <DataGridTextColumn Header="Сумма" Binding="{Binding Total}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Grid.Column="1" Header="Выплаты по месяцам" Margin="8,0,0,8">
+            <DataGrid ItemsSource="{Binding MonthlyTotals}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Месяц" Binding="{Binding Month}" Width="*"/>
+                    <DataGridTextColumn Header="Сумма" Binding="{Binding Total}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2"
+                  Grid.ColumnSpan="2"
+                  Header="Результат (Employees.xml)"
+                  Margin="0,0,0,8">
+            <TextBox Text="{Binding EmployeesXml, Mode=OneWay}"
+                     IsReadOnly="True"
+                     TextWrapping="NoWrap"
+                     AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     FontFamily="Consolas"
+                     Background="#FAFAFA"/>
+        </GroupBox>
+
+        <GroupBox Grid.Row="3"
+                  Grid.ColumnSpan="2"
+                  Header="Добавить запись в Data1.xml (только для Data1)"
+                  IsEnabled="{Binding IsData1Selected}">
+            <Grid Margin="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Имя" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,12,0"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Фамилия" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding NewSurname, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,12,0"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Сумма" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding NewAmount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,12,0"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="Месяц" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ComboBox Grid.Row="0"
+                          Grid.Column="7"
+                          ItemsSource="{Binding Months}"
+                          SelectedItem="{Binding SelectedMonth}"
+                          Margin="0,0,12,0"/>
+
+                <Button Grid.Row="0"
+                        Grid.Column="8"
+                        Content="Добавить и пересчитать"
+                        Padding="12,4"
+                        Command="{Binding AddItemCommand}"/>
+
+                <TextBlock Grid.Row="1"
+                           Grid.Column="4"
+                           Grid.ColumnSpan="2"
+                           Text="{Binding AmountValidationHint}"
+                           Foreground="#C62828"
+                           FontSize="11"
+                           Margin="0,4,12,0"
+                           TextWrapping="Wrap"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
