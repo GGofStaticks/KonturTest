@@ -8,6 +8,12 @@ Windows, .NET 10 SDK, Rider или Visual Studio с WPF.
 
 Открыть KonturTest.sln, Clean + Rebuild, запустить проект KonturTest.
 
+Тесты:
+
+```
+dotnet test KonturTest.Tests/KonturTest.Tests.csproj
+```
+
 ## Использование
 
 Выбрать файл в комбобоксе источник (Data1.xml или Data2.xml), нажать запустить.
@@ -40,13 +46,13 @@ ViewModels/ mvvm, команды, данные для ui.
 
 MainWindow.xaml - ui. MainWindow.xaml.cs - подключение ViewModel и создание сервисов через new.
 
+KonturTest.Tests/ unit-тесты на парсер, xslt, totals, rollback Data1.
+
 При запуске рабочие копии лежат в bin/Debug/net10.0-windows/Resources/:
 
 - Data1.xml копия, сюда пишутся новые item и total на Pay
 - Employees.xml результат преобразования
 - остальное читается из Resources/ проекта, если в bin нет
-
-
 
 ## ТЗ
 
@@ -67,6 +73,8 @@ MainWindow.xaml - ui. MainWindow.xaml.cs - подключение ViewModel и �
 
 Если AddItem упал, `Data1.xml` откатывается в начальное состояние из `.bak`.
 
+Pipeline держит xml в `XmlDocument` между шагами, без лишней перегонки в строку.
+
 ## Заметки по данным
 
 - атрибут mount как в исходниках задания, не переименовывал
@@ -74,12 +82,7 @@ MainWindow.xaml - ui. MainWindow.xaml.cs - подключение ViewModel и �
 - суммы: запятая и точка как в примере, при добавлении пишется как ввели
 - месяцы в UI: january, february, как в XML
 
-
-
-## Если доделывать в полноценное решение
+## Если доделывать
 
 - CopyToOutputDirectory для Resources/**
-- тесты на AmountParser, XSLT, сортировку месяцев
-- нормализовать суммы через AmountParser.Format если нормализация необходима
-- async и IsBusy для ускорения работы и избегания подвисаний
-
+- async и IsBusy, чтобы UI не подвисал на больших xml
