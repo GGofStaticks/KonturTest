@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KonturTest", "KonturTest\KonturTest.csproj", "{DA33ACFC-88A7-4F4E-BFD8-2F5E252870E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KonturTest.Tests", "KonturTest.Tests\KonturTest.Tests.csproj", "{8E2E5A1C-4F0E-4A5D-9B2C-1D7E8F0A2B11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{DA33ACFC-88A7-4F4E-BFD8-2F5E252870E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA33ACFC-88A7-4F4E-BFD8-2F5E252870E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA33ACFC-88A7-4F4E-BFD8-2F5E252870E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E2E5A1C-4F0E-4A5D-9B2C-1D7E8F0A2B11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E2E5A1C-4F0E-4A5D-9B2C-1D7E8F0A2B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E2E5A1C-4F0E-4A5D-9B2C-1D7E8F0A2B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E2E5A1C-4F0E-4A5D-9B2C-1D7E8F0A2B11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
